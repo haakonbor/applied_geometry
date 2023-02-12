@@ -10,14 +10,8 @@ template <typename T> class Model_curve1 : public GMlib::PCurve<T, 3> {
 
 public:
   Model_curve1();
-  Model_curve1(T radius1, T radius2);
   Model_curve1(const Model_curve1<T> &copy);
   virtual ~Model_curve1();
-
-  // Public local functions
-  T getRadius(int i = 1) const;
-  void setRadius(T radius = T(20));
-  void setRadius(T radius1, T radius2);
 
   //****************************************
   //****** Virtual public functions   ******
@@ -38,17 +32,16 @@ protected:
 // Constructors and destructor           **
 //*****************************************
 
-/*! Model_curve1<T>::Model_curve1( T radius )
- *  Default constructor, to make a circle with the radius = radius.
+/*! Model_curve1<T>::Model_curve1( )
+ *  Default constructor to make a curve.
  *
- *  \param[in] radius      (default 20) The radius of the circle
  */
 template <typename T>
 inline Model_curve1<T>::Model_curve1() : GMlib::PCurve<T, 3>(20, 0, 1) {}
 
 /*! Model_curve1<T>::Model_curve1(const Model_curve1<T>& copy )
  *  A copy constructor
- *  Making a copy of the curve (circle)
+ *  Making a copy of the curve
  *
  *  \param[in] copy The curve to copy
  */

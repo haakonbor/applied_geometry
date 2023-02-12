@@ -1,6 +1,7 @@
 
 #include <iostream>
 
+#include "application/b_spline_curve.h"
 #include "application/model_curve1.h"
 #include "parametrics/curves/gmpcircle.h"
 #include "scenario.h"
@@ -77,10 +78,23 @@ void Scenario::initializeScenario() {
   //  ptrack2->setArrowLength(2);
   //  ptom->insert(ptrack2);
 
-  auto curve = new hbb::Model_curve1<float>();
-  curve->toggleDefaultVisualizer();
-  curve->sample(60, 1);
-  this->scene()->insert(curve);
+  //  auto curve = new hbb::Model_curve1<float>();
+  //  curve->toggleDefaultVisualizer();
+  //  curve->sample(60, 1);
+  //  this->scene()->insert(curve);
+
+  GMlib::DVector<GMlib::Vector<float, 3>> c(6);
+  c[0] = {0, 0, 2};
+  c[1] = {1, 0, 6};
+  c[2] = {2, 1, -2};
+  c[3] = {2, 2, 0};
+  c[4] = {2, 5, -4};
+  c[5] = {4, 2, 0};
+
+  auto bspline = new hbb::My_B_spline<float>(c);
+  bspline->toggleDefaultVisualizer();
+  bspline->sample(60, 0);
+  this->scene()->insert(bspline);
 }
 
 void Scenario::cleanupScenario() {}
