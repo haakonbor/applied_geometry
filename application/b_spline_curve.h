@@ -30,6 +30,7 @@ protected:
     void createKnotVector(T start, T end);
     T getW(int d, int i, T knot_val) const;
     int getKnotIndex(T t) const;
+    GMlib::Vector<T,3> getBasisVector(int i, T t) const;
 
     GMlib::DVector<GMlib::Vector<T, 3>> _control_points;
     std::vector<T> _knot_vector;
@@ -53,7 +54,11 @@ inline My_B_spline<T>::My_B_spline(const GMlib::DVector<GMlib::Vector<float,3>>&
 }
 
 template <typename T>
-inline My_B_spline<T>::My_B_spline(const GMlib::DVector<GMlib::Vector<float,3>>& p, int n) {
+inline My_B_spline<T>::My_B_spline(const GMlib::DVector<GMlib::Vector<float,3>>& p, int n)
+    : GMlib::PCurve<T, 3>(0,0,0), _n(n) {
+    createKnotVector(p.front(), p.back());
+
+    auto A = GMlib::DMatrix<T>(p.getDim(), _n, T(0));
 
 }
 
@@ -79,17 +84,9 @@ template <typename T> void My_B_spline<T>::eval(T t, int d, bool /*l*/) const {
 
     int i = getKnotIndex(t);
 
-    /*
-     * c(t) = ( 1 - w_1_i(t)   w_1_i(t) ) ( 1 - w_2_i-1(t)   w_2_i-1(t)          0     ) ( c_i-2 )
-     *                                    (       0         1 - w_2_i(t)      w_2_i(t) ) ( c_i-1 )
-     *                                                                                   (  c_i  )
-    */
+    auto basis = getBasisVector(i, t);
 
-    auto basis1 = (1 - getW(1, i, t)) * (1 - getW(2, i - 1, t));
-    auto basis2 = (1 - getW(1, i, t)) * getW(2, i - 1, t) + getW(1, i, t) * (1 - getW(2, i, t));
-    auto basis3 = getW(1, i, t) * getW(2, i, t);
-
-    this->_p[0] = basis1 * _control_points[i-2] + basis2 * _control_points[i-1] + basis3 * _control_points[i];
+    this->_p[0] = basis[0] * _control_points[i-2] + basis[1] * _control_points[i-1] + basis[2] * _control_points[i];
 }
 
 template <typename T> T My_B_spline<T>::getStartP() const { return _knot_vector[_k]; }
@@ -127,6 +124,25 @@ template <typename T>
 T My_B_spline<T>::getW(int d, int i, T knot_val) const {
     // From function 6.11 at page 82 in the book
     return (knot_val - _knot_vector[i]) / (_knot_vector[i+d] - _knot_vector[i]);
+}
+
+template <typename T>
+GMlib::Vector<T,3> My_B_spline<T>::getBasisVector(int i, T t) const {
+    /*
+     * c(t) = ( 1 - w_1_i(t)   w_1_i(t) ) ( 1 - w_2_i-1(t)   w_2_i-1(t)          0     ) ( c_i-2 )
+     *                                    (       0         1 - w_2_i(t)      w_2_i(t) ) ( c_i-1 )
+     *                                                                                   (  c_i  )
+    */
+
+    auto w_1_i = getW(1, i, t);
+    auto w_2_i = getW(2, i, t);
+    auto w_2_i_1 = getW(2, i - 1, t);
+
+    auto basis1 = (1 - w_1_i) * (1 - w_2_i_1);
+    auto basis2 = (1 - w_1_i) * w_2_i_1 + w_1_i * (1 - w_2_i);
+    auto basis3 = w_1_i * w_2_i;
+
+    return {basis1, basis2, basis3};
 }
 
 template <typename T>
