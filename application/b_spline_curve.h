@@ -51,15 +51,37 @@ template <typename T>
 inline My_B_spline<T>::My_B_spline(const GMlib::DVector<GMlib::Vector<float,3>>& c)
     : GMlib::PCurve<T, 3>(0,0,0), _control_points(c), _n(c.getDim()) {
     createKnotVector(T(0), T(1));
+    std::cout << "Control points: " << _control_points << std::endl;
 }
 
 template <typename T>
 inline My_B_spline<T>::My_B_spline(const GMlib::DVector<GMlib::Vector<float,3>>& p, int n)
     : GMlib::PCurve<T, 3>(0,0,0), _n(n) {
-    createKnotVector(p.front(), p.back());
+    // From formula 6.21, 6.22, and 6.23 in chapter 6.5 in the book
+    auto x = std::vector<T>{T(0)};
+    for (int i = 1; i < p.getDim(); i++) {
+        x.push_back((p[i] - p[i-1]).getLength() + x.back());
+    }
 
-    auto A = GMlib::DMatrix<T>(p.getDim(), _n, T(0));
+    createKnotVector(x[0], x.back());
+    std::cout << "X: " << x << std::endl;
 
+    auto A = GMlib::DMatrix<T>(p.getDim(), n, T(0));
+    for (int i = 0; i < x.size(); i++) {
+        int knot_index = getKnotIndex(x[i]);
+        auto basis_vector = getBasisVector(knot_index, x[i]);
+        A[i][knot_index - 2] = basis_vector[0];
+        A[i][knot_index - 1] = basis_vector[1];
+        A[i][knot_index]     = basis_vector[2];
+    }
+
+    auto AT = A.transpose();
+    auto B = AT * A;
+    auto y = AT * p;
+    B.invert();
+    _control_points = B * y;
+
+    std::cout << "Control points: " << _control_points << std::endl;
 }
 
 template <typename T>
@@ -121,9 +143,9 @@ void My_B_spline<T>::createKnotVector(T start, T end) {
 }
 
 template <typename T>
-T My_B_spline<T>::getW(int d, int i, T knot_val) const {
+T My_B_spline<T>::getW(int d, int i, T t) const {
     // From function 6.11 at page 82 in the book
-    return (knot_val - _knot_vector[i]) / (_knot_vector[i+d] - _knot_vector[i]);
+    return (t - _knot_vector[i]) / (_knot_vector[i+d] - _knot_vector[i]);
 }
 
 template <typename T>

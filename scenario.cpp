@@ -67,6 +67,7 @@ void Scenario::initializeScenario() {
   GMlib::Material mm(GMlib::GMmaterial::polishedBronze());
   mm.set(45.0);
 
+  /* DEFAULT DEMO */
   //  auto ptom = new TestTorus(1.0f, 0.4f, 0.6f);
   //  ptom->toggleDefaultVisualizer();
   //  ptom->sample(60,60,1,1);
@@ -78,22 +79,32 @@ void Scenario::initializeScenario() {
   //  ptrack2->setArrowLength(2);
   //  ptom->insert(ptrack2);
 
+  /* MODEL CURVE */
   //  auto curve = new hbb::Model_curve1<float>();
   //  curve->toggleDefaultVisualizer();
   //  curve->sample(60, 1);
   //  this->scene()->insert(curve);
 
-  GMlib::DVector<GMlib::Vector<float, 3>> c(6);
-  c[0] = {0, 0, 2};
-  c[1] = {1, 0, 6};
-  c[2] = {2, 1, -2};
-  c[3] = {2, 2, 0};
-  c[4] = {2, 5, -4};
-  c[5] = {4, 2, 0};
+  /* 2ND DEGREE B-SPLINE */
+  GMlib::DVector<GMlib::Vector<float, 3>> c(12);
+  c[0] = {0, -5, 0};
+  c[1] = {-5, -5, -2};
+  c[2] = {-5, 0, -4};
+  c[3] = {-5, 5, -6};
+  c[4] = {0, 5, -8};
+  c[5] = {5, 5, -10};
+  c[6] = {5, 0, -12};
+  c[7] = {5, -5, -10};
+  c[8] = {0, -5, -8};
+  c[9] = {-5, -5, -6};
+  c[10] = {-5, 0, -4};
+  c[11] = {-5, 5, -2};
+  //  c[12] = {0, 0, 0};
 
-  auto bspline = new hbb::My_B_spline<float>(c);
+  auto bspline = new hbb::My_B_spline<float>(c, 9);
   bspline->toggleDefaultVisualizer();
   bspline->sample(60, 0);
+  bspline->setLineWidth(4);
   this->scene()->insert(bspline);
 }
 
