@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "application/b_spline_curve.h"
+#include "application/closed_subdivision_curve.h"
 #include "application/model_curve1.h"
 #include "parametrics/curves/gmpcircle.h"
 #include "scenario.h"
@@ -67,6 +68,30 @@ void Scenario::initializeScenario() {
   GMlib::Material mm(GMlib::GMmaterial::polishedBronze());
   mm.set(45.0);
 
+  GMlib::DVector<GMlib::Vector<float, 3>> c(8);
+  //  c[0] = {0, -5, 0};
+  //  c[1] = {-5, -5, -2};
+  //  c[2] = {-5, 0, -4};
+  //  c[3] = {-5, 5, -6};
+  //  c[4] = {0, 5, -8};
+  //  c[5] = {5, 5, -10};
+  //  c[6] = {5, 0, -12};
+  //  c[7] = {5, -5, -10};
+  //  c[8] = {0, -5, -8};
+  //  c[9] = {-5, -5, -6};
+  //  c[10] = {-5, 0, -4};
+  //  c[11] = {-5, 5, -2};
+  //  c[12] = {0, 0, 0};
+
+  c[0] = {0, 0, 0};
+  c[1] = {5, 0, 0};
+  c[2] = {10, 5, 0};
+  c[3] = {10, 10, 0};
+  c[4] = {5, 15, 0};
+  c[5] = {10, 20, 0};
+  c[6] = {5, 25, 0};
+  c[7] = {0, 20, 0};
+
   /* DEFAULT DEMO */
   //  auto ptom = new TestTorus(1.0f, 0.4f, 0.6f);
   //  ptom->toggleDefaultVisualizer();
@@ -86,26 +111,28 @@ void Scenario::initializeScenario() {
   //  this->scene()->insert(curve);
 
   /* 2ND DEGREE B-SPLINE */
-  GMlib::DVector<GMlib::Vector<float, 3>> c(12);
-  c[0] = {0, -5, 0};
-  c[1] = {-5, -5, -2};
-  c[2] = {-5, 0, -4};
-  c[3] = {-5, 5, -6};
-  c[4] = {0, 5, -8};
-  c[5] = {5, 5, -10};
-  c[6] = {5, 0, -12};
-  c[7] = {5, -5, -10};
-  c[8] = {0, -5, -8};
-  c[9] = {-5, -5, -6};
-  c[10] = {-5, 0, -4};
-  c[11] = {-5, 5, -2};
-  //  c[12] = {0, 0, 0};
+  //  auto bspline = new hbb::My_B_spline<float>(c);
+  //  bspline->toggleDefaultVisualizer();
+  //  bspline->sample(60, 0);
+  //  bspline->setLineWidth(4);
+  //  this->scene()->insert(bspline);
 
-  auto bspline = new hbb::My_B_spline<float>(c, 9);
-  bspline->toggleDefaultVisualizer();
-  bspline->sample(60, 0);
-  bspline->setLineWidth(4);
-  this->scene()->insert(bspline);
+  /* CLOSED SUBDIVISION CURVE */
+  // 2nd-degree curve
+  auto closed_subdivision_curve1 = new hbb::ClosedSubdivisionCurve<float>(c, 2);
+  closed_subdivision_curve1->toggleDefaultVisualizer();
+  closed_subdivision_curve1->sample(3, 0);
+  closed_subdivision_curve1->setLineWidth(4);
+  closed_subdivision_curve1->setColor(GMlib::GMcolor::red());
+  this->scene()->insert(closed_subdivision_curve1);
+
+  // 3rd-degree  curve
+  auto closed_subdivision_curve2 = new hbb::ClosedSubdivisionCurve<float>(c, 3);
+  closed_subdivision_curve2->toggleDefaultVisualizer();
+  closed_subdivision_curve2->sample(3, 0);
+  closed_subdivision_curve2->setLineWidth(4);
+  closed_subdivision_curve2->setColor(GMlib::GMcolor::blue());
+  this->scene()->insert(closed_subdivision_curve2);
 }
 
 void Scenario::cleanupScenario() {}
