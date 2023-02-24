@@ -66,7 +66,7 @@ template <typename T> Model_curve1<T>::~Model_curve1() {}
 /*! bool Model_curve1<T>::isClosed() const
  *  To tell that this curve (circle) is closed.
  */
-template <typename T> bool Model_curve1<T>::isClosed() const { return false; }
+template <typename T> bool Model_curve1<T>::isClosed() const { return true; }
 
 //******************************************************
 // Overrided (protected) virtual functons from PCurve **

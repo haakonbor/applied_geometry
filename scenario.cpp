@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "application/b_spline_curve.h"
+#include "application/blending_spline_curve.h"
 #include "application/closed_subdivision_curve.h"
 #include "application/model_curve1.h"
 #include "parametrics/curves/gmpcircle.h"
@@ -105,10 +106,11 @@ void Scenario::initializeScenario() {
   //  ptom->insert(ptrack2);
 
   /* MODEL CURVE */
-  //  auto curve = new hbb::Model_curve1<float>();
-  //  curve->toggleDefaultVisualizer();
-  //  curve->sample(60, 1);
-  //  this->scene()->insert(curve);
+  auto curve = new hbb::Model_curve1<float>();
+  curve->toggleDefaultVisualizer();
+  curve->sample(100, 1);
+  curve->setLineWidth(1);
+  this->scene()->insert(curve);
 
   /* 2ND DEGREE B-SPLINE */
   //  auto bspline = new hbb::My_B_spline<float>(c);
@@ -119,20 +121,28 @@ void Scenario::initializeScenario() {
 
   /* CLOSED SUBDIVISION CURVE */
   // 2nd-degree curve
-  auto closed_subdivision_curve1 = new hbb::ClosedSubdivisionCurve<float>(c, 2);
-  closed_subdivision_curve1->toggleDefaultVisualizer();
-  closed_subdivision_curve1->sample(3, 0);
-  closed_subdivision_curve1->setLineWidth(4);
-  closed_subdivision_curve1->setColor(GMlib::GMcolor::red());
-  this->scene()->insert(closed_subdivision_curve1);
+  //  auto closed_subdivision_curve1 = new hbb::ClosedSubdivisionCurve<float>(c,
+  //  2); closed_subdivision_curve1->toggleDefaultVisualizer();
+  //  closed_subdivision_curve1->sample(3, 0);
+  //  closed_subdivision_curve1->setLineWidth(4);
+  //  closed_subdivision_curve1->setColor(GMlib::GMcolor::red());
+  //  this->scene()->insert(closed_subdivision_curve1);
 
-  // 3rd-degree  curve
-  auto closed_subdivision_curve2 = new hbb::ClosedSubdivisionCurve<float>(c, 3);
-  closed_subdivision_curve2->toggleDefaultVisualizer();
-  closed_subdivision_curve2->sample(3, 0);
-  closed_subdivision_curve2->setLineWidth(4);
-  closed_subdivision_curve2->setColor(GMlib::GMcolor::blue());
-  this->scene()->insert(closed_subdivision_curve2);
+  //  // 3rd-degree  curve
+  //  auto closed_subdivision_curve2 = new hbb::ClosedSubdivisionCurve<float>(c,
+  //  3); closed_subdivision_curve2->toggleDefaultVisualizer();
+  //  closed_subdivision_curve2->sample(3, 0);
+  //  closed_subdivision_curve2->setLineWidth(4);
+  //  closed_subdivision_curve2->setColor(GMlib::GMcolor::blue());
+  //  this->scene()->insert(closed_subdivision_curve2);
+
+  /* BLENDING SPLINE CURVE */
+  auto blending_spline_curve = new hbb::Blending_spline_curve<float>(curve, 10);
+  blending_spline_curve->toggleDefaultVisualizer();
+  blending_spline_curve->sample(100, 0);
+  blending_spline_curve->setLineWidth(4);
+  blending_spline_curve->setColor(GMlib::GMcolor::blue());
+  this->scene()->insert(blending_spline_curve);
 }
 
 void Scenario::cleanupScenario() {}
