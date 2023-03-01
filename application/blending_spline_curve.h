@@ -34,6 +34,8 @@ protected:
     GMlib::Vector<T,3> getBasisVector(int i, T t) const;
     float bFunction(T t) const;
 
+    void localSimulate(double dt) override;
+
     GMlib::DVector<GMlib::Vector<T, 3>> _control_points;
     std::vector<T> _knot_vector;
     GMlib::PCurve<T, 3>* _model_curve;
@@ -41,6 +43,10 @@ protected:
 
     int _n;         // Number of control points
     int _k = 2;
+
+    int _count = 0;
+    int _direction = 1;
+    float _x = 0.0f;
 
     bool _is_closed;
 
@@ -133,22 +139,6 @@ T Blending_spline_curve<T>::getW(int d, int i, T t) const {
 
 template <typename T>
 GMlib::Vector<T,3> Blending_spline_curve<T>::getBasisVector(int i, T t) const {
-//    /*
-//     * c(t) = ( 1 - w_1_i(t)   w_1_i(t) ) ( 1 - w_2_i-1(t)   w_2_i-1(t)          0     ) ( c_i-2 )
-//     *                                    (       0         1 - w_2_i(t)      w_2_i(t) ) ( c_i-1 )
-//     *                                                                                   (  c_i  )
-//    */
-
-//    auto w_1_i = getW(1, i, t);
-//    auto w_2_i = getW(2, i, t);
-//    auto w_2_i_1 = getW(2, i - 1, t);
-
-//    auto basis1 = (1 - w_1_i) * (1 - w_2_i_1);
-//    auto basis2 = (1 - w_1_i) * w_2_i_1 + w_1_i * (1 - w_2_i);
-//    auto basis3 = w_1_i * w_2_i;
-
-//    return {basis1, basis2, basis3};
-
     T w_1_i = getW(1, i, t);
     T B = bFunction(w_1_i);
 
@@ -157,7 +147,7 @@ GMlib::Vector<T,3> Blending_spline_curve<T>::getBasisVector(int i, T t) const {
 
 template <typename T>
 float Blending_spline_curve<T>::bFunction(T t) const {
-    // Symmetric TB-functoin of order 2 (page 134 in the book)
+    // Symmetric TB-function of order 2 (page 134 in the book)
     return t - T(1 / M_2PI) * sin(M_2PI * t);
 }
 
@@ -168,6 +158,28 @@ int Blending_spline_curve<T>::getKnotIndex(T t) const {
     }
 
     return std::distance(_knot_vector.begin(), std::upper_bound(_knot_vector.begin(), _knot_vector.end(), t)) - 1;
+}
+
+template <typename T>
+void Blending_spline_curve<T>::localSimulate(double dt) {
+    for (int i = 0; i < _n; i++) {
+        if (i % 2 == 0) {
+            _local_curves[i]->translate({T(0.1) * cos(_x), T(0.1) * sin(_x), T(0.0)});
+        }
+        else {
+            _local_curves[i]->rotate(cos(_x) * 0.1, {1.0, 0.0, 0.0});
+        }
+    }
+
+    _x += 0.1f;
+    if (_x >= M_2PI) {
+        _x = 0.0f;
+    }
+
+
+    this->resample();
+    this->setEditDone();
+
 }
 
 }; // END namespace hbb

@@ -3,9 +3,13 @@
 
 #include "application/b_spline_curve.h"
 #include "application/blending_spline_curve.h"
+#include "application/blending_spline_surface.h"
 #include "application/closed_subdivision_curve.h"
 #include "application/model_curve1.h"
 #include "parametrics/curves/gmpcircle.h"
+#include "parametrics/surfaces/gmpcylinder.h"
+#include "parametrics/surfaces/gmpplane.h"
+#include "parametrics/surfaces/gmptorus.h"
 #include "scenario.h"
 #include "testtorus.h"
 
@@ -105,13 +109,6 @@ void Scenario::initializeScenario() {
   //  ptrack2->setArrowLength(2);
   //  ptom->insert(ptrack2);
 
-  /* MODEL CURVE */
-  auto curve = new hbb::Model_curve1<float>();
-  curve->toggleDefaultVisualizer();
-  curve->sample(100, 1);
-  curve->setLineWidth(1);
-  this->scene()->insert(curve);
-
   /* 2ND DEGREE B-SPLINE */
   //  auto bspline = new hbb::My_B_spline<float>(c);
   //  bspline->toggleDefaultVisualizer();
@@ -120,7 +117,7 @@ void Scenario::initializeScenario() {
   //  this->scene()->insert(bspline);
 
   /* CLOSED SUBDIVISION CURVE */
-  // 2nd-degree curve
+  //  // 2nd-degree curve
   //  auto closed_subdivision_curve1 = new hbb::ClosedSubdivisionCurve<float>(c,
   //  2); closed_subdivision_curve1->toggleDefaultVisualizer();
   //  closed_subdivision_curve1->sample(3, 0);
@@ -137,12 +134,35 @@ void Scenario::initializeScenario() {
   //  this->scene()->insert(closed_subdivision_curve2);
 
   /* BLENDING SPLINE CURVE */
-  auto blending_spline_curve = new hbb::Blending_spline_curve<float>(curve, 10);
-  blending_spline_curve->toggleDefaultVisualizer();
-  blending_spline_curve->sample(100, 0);
-  blending_spline_curve->setLineWidth(4);
-  blending_spline_curve->setColor(GMlib::GMcolor::blue());
-  this->scene()->insert(blending_spline_curve);
+  /* MODEL CURVE */
+  //  auto curve = new hbb::Model_curve1<float>();
+  //  curve->toggleDefaultVisualizer();
+  //  curve->sample(100, 1);
+  //  curve->setLineWidth(1);
+  //  this->scene()->insert(curve);
+  //  auto blending_spline_curve = new hbb::Blending_spline_curve<float>(curve,
+  //  10); blending_spline_curve->toggleDefaultVisualizer();
+  //  blending_spline_curve->sample(100, 0);
+  //  blending_spline_curve->setLineWidth(4);
+  //  blending_spline_curve->setColor(GMlib::GMcolor::blue());
+  //  this->scene()->insert(blending_spline_curve);
+
+  /* BLENDING SPLINE SURFACE */
+  auto cylinder = new GMlib::PCylinder<float>();
+  auto torus = new GMlib::PTorus<float>();
+  auto plane =
+      new GMlib::PPlane<float>(GMlib::Point<float, 3>(0.0f, 0.0f, 0.0f),
+                               GMlib::Point<float, 3>(8.0f, 0.0f, 0.0f),
+                               GMlib::Point<float, 3>(0.0f, 8.0f, 0.0f));
+
+  // choose between cylinder, torus and plane
+  auto model_surface = cylinder;
+
+  auto blending_spline_surface =
+      new hbb::Blending_spline_surface<float>(model_surface, 4, 4);
+  blending_spline_surface->toggleDefaultVisualizer();
+  blending_spline_surface->sample(50, 50, 1, 1);
+  this->scene()->insert(blending_spline_surface);
 }
 
 void Scenario::cleanupScenario() {}
