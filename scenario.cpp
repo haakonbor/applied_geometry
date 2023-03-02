@@ -135,34 +135,34 @@ void Scenario::initializeScenario() {
 
   /* BLENDING SPLINE CURVE */
   /* MODEL CURVE */
-  //  auto curve = new hbb::Model_curve1<float>();
-  //  curve->toggleDefaultVisualizer();
-  //  curve->sample(100, 1);
-  //  curve->setLineWidth(1);
-  //  this->scene()->insert(curve);
-  //  auto blending_spline_curve = new hbb::Blending_spline_curve<float>(curve,
-  //  10); blending_spline_curve->toggleDefaultVisualizer();
-  //  blending_spline_curve->sample(100, 0);
-  //  blending_spline_curve->setLineWidth(4);
-  //  blending_spline_curve->setColor(GMlib::GMcolor::blue());
-  //  this->scene()->insert(blending_spline_curve);
+  auto curve = new hbb::Model_curve1<float>();
+  curve->toggleDefaultVisualizer();
+  curve->sample(100, 1);
+  curve->setLineWidth(1);
+  this->scene()->insert(curve);
+  auto blending_spline_curve = new hbb::Blending_spline_curve<float>(curve, 4);
+  blending_spline_curve->toggleDefaultVisualizer();
+  blending_spline_curve->sample(100, 0);
+  blending_spline_curve->setLineWidth(4);
+  blending_spline_curve->setColor(GMlib::GMcolor::blue());
+  this->scene()->insert(blending_spline_curve);
 
   /* BLENDING SPLINE SURFACE */
-  auto cylinder = new GMlib::PCylinder<float>();
-  auto torus = new GMlib::PTorus<float>();
-  auto plane =
-      new GMlib::PPlane<float>(GMlib::Point<float, 3>(0.0f, 0.0f, 0.0f),
-                               GMlib::Point<float, 3>(8.0f, 0.0f, 0.0f),
-                               GMlib::Point<float, 3>(0.0f, 8.0f, 0.0f));
+  //  auto cylinder = new GMlib::PCylinder<float>();
+  //  auto torus = new GMlib::PTorus<float>();
+  //  auto plane =
+  //      new GMlib::PPlane<float>(GMlib::Point<float, 3>(0.0f, 0.0f, 0.0f),
+  //                               GMlib::Point<float, 3>(8.0f, 0.0f, 0.0f),
+  //                               GMlib::Point<float, 3>(0.0f, 8.0f, 0.0f));
 
-  // choose between cylinder, torus and plane
-  auto model_surface = cylinder;
+  //  // choose between cylinder, torus and plane
+  //  auto model_surface = torus;
 
-  auto blending_spline_surface =
-      new hbb::Blending_spline_surface<float>(model_surface, 4, 4);
-  blending_spline_surface->toggleDefaultVisualizer();
-  blending_spline_surface->sample(50, 50, 1, 1);
-  this->scene()->insert(blending_spline_surface);
+  //  auto blending_spline_surface =
+  //      new hbb::Blending_spline_surface<float>(model_surface, 4, 4);
+  //  blending_spline_surface->toggleDefaultVisualizer();
+  //  blending_spline_surface->sample(50, 50, 1, 1);
+  //  this->scene()->insert(blending_spline_surface);
 }
 
 void Scenario::cleanupScenario() {}

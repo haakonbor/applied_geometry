@@ -25,7 +25,7 @@ protected:
     void localSimulate(double dt) override;
 
 private:
-    int                                 _n_u, _n_v, _k;
+    int                                 _n_u, _n_v, _k, _d;
     bool                                _is_U_closed, _is_V_closed;
     GMlib::PSurf<T, 3>*                 _model_surface;
     std::vector<T>                      _u;
@@ -35,7 +35,7 @@ private:
     void           createU(T start, T end);
     void           createV(T start, T end);
     void           createLocalSurfaces();
-    int            getIndex(T t, const std::vector<T>& _t, bool is_closed) const;
+    int            getIndex(T t, const std::vector<T>& _t, bool is_closed, int n) const;
     void           getBasis(T& B, T& d_B, int i, T t, const std::vector<T>& _t) const;
     std::vector<T> bFunction(T t) const;
     std::vector<T> _w(int d, int i, T t, const std::vector<T>& _t) const;
@@ -45,7 +45,7 @@ private:
 template <typename T>
 inline Blending_spline_surface<T>::Blending_spline_surface(GMlib::PSurf<T, 3>* model_surface,
                                                            int n_u, int n_v, int d)
-    : _model_surface(model_surface), _n_u(n_u), _n_v(n_v), _k(d + 1),
+    : _model_surface(model_surface), _n_u(n_u), _n_v(n_v), _k(d + 1), _d(d),
     _is_U_closed(model_surface->isClosedU()), _is_V_closed(model_surface->isClosedV()) {
 
     _s.setDim((isClosedU() ? _n_u + 1 : _n_u),
@@ -76,8 +76,8 @@ void Blending_spline_surface<T>::eval(T u, T v, int d1, int d2,
                                       bool /*lv = true*/) const {
     this->_p.setDim(d1 + 1, d2 + 1);
 
-    int u_i = getIndex(u, _u, isClosedU());
-    int v_i = getIndex(v, _v, isClosedV());
+    int u_i = getIndex(u, _u, isClosedU(), _n_u);
+    int v_i = getIndex(v, _v, isClosedV(), _n_v);
 
     T B_u, d_B_u;
     T B_v, d_B_v;
@@ -257,15 +257,22 @@ void Blending_spline_surface<T>::localSimulate(double dt) {
 
 template <typename T>
 int Blending_spline_surface<T>::getIndex(T t, const std::vector<T>& _t,
-                                         bool is_closed) const {
+                                         bool is_closed, int n) const {
+
     if (is_closed) {
-        for (int i = _k - 1; i < _t.size(); i++) {
-            if (t <= _t[i + 1]) return i;
+        // t_d <= t < t_n+d
+        for (int i = _d; i < n + _d - 1; i++) {
+            if (t <= _t[i + 1]) {
+                return i;
+            }
         }
     }
     else {
-        for (int i = _k - 1; i < _t.size() - 1; i++) {
-            if (t <= _t[i + 1]) return i;
+        // t_d <= t <= t_n
+        for (int i = _d; i < n; i++) {
+            if (t <= _t[i + 1]) {
+                return i;
+            }
         }
     }
 }

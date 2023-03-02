@@ -43,6 +43,7 @@ protected:
 
     int _n;         // Number of control points
     int _k = 2;
+    int _d = _k - 1;
 
     int _count = 0;
     int _direction = 1;
@@ -124,8 +125,10 @@ void Blending_spline_curve<T>::createLocalCurves() {
         // subcurve(original_curve, start_parameter, end_parameter, parameter_local_origin)
         _local_curves.push_back(new GMlib::PSubCurve<T>(_model_curve, _knot_vector[i], _knot_vector[i+2], _knot_vector[i+1]));
         _local_curves[i]->toggleDefaultVisualizer();
+        _local_curves[i]->sample(5, 0);
         _local_curves[i]->setCollapsed(true);
         _local_curves[i]->setParent(this);
+        this->insert(_local_curves[i]);
     }
 
     _local_curves.push_back(_local_curves[0]);
@@ -153,25 +156,27 @@ float Blending_spline_curve<T>::bFunction(T t) const {
 
 template <typename T>
 int Blending_spline_curve<T>::getKnotIndex(T t) const {
-    if (t >= getEndP()) {
-        return _knot_vector.size() - 2;
+    // Since the curve is closed: t_d <= t < t_n+d
+    for (int i = _d; i < _n + _d - 1; i++) {
+        if (t <= _knot_vector[i + 1]){
+            return i;
+        }
     }
-
-    return std::distance(_knot_vector.begin(), std::upper_bound(_knot_vector.begin(), _knot_vector.end(), t)) - 1;
 }
 
 template <typename T>
 void Blending_spline_curve<T>::localSimulate(double dt) {
     for (int i = 0; i < _n; i++) {
         if (i % 2 == 0) {
-            _local_curves[i]->translate({T(0.1) * cos(_x), T(0.1) * sin(_x), T(0.0)});
+            _local_curves[i]->translate(cos(_x) * 0.01);
+            _local_curves[i]->rotate(0.1, {1.0, 0.0, 0.0});
         }
-        else {
-            _local_curves[i]->rotate(cos(_x) * 0.1, {1.0, 0.0, 0.0});
-        }
+
     }
 
-    _x += 0.1f;
+    this->rotate(0.01, {1.0, 0.0, 0.0});
+
+    _x += 0.01f;
     if (_x >= M_2PI) {
         _x = 0.0f;
     }

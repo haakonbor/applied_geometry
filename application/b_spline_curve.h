@@ -169,11 +169,12 @@ GMlib::Vector<T,3> My_B_spline<T>::getBasisVector(int i, T t) const {
 
 template <typename T>
 int My_B_spline<T>::getKnotIndex(T t) const {
-    if (t >= getEndP()) {
-        return _knot_vector.size() - _k - 1;
+    // Since the curve is open/clamped: t_d <= t <= t_n
+    for (int i = _d; i < _n; i++) {
+        if (t <= _knot_vector[i + 1]){
+            return i;
+        }
     }
-
-    return std::distance(_knot_vector.begin(), std::upper_bound(_knot_vector.begin(), _knot_vector.end(), t)) - 1;
 }
 
 }; // END namespace hbb
