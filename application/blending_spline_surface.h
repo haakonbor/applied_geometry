@@ -159,13 +159,12 @@ Blending_spline_surface<T>::_w(int d, int i, T t, const std::vector<T>& _t) cons
 
 template <typename T>
 inline void Blending_spline_surface<T>::createU(T start, T end) {
+    _u.clear();
     // Closed knot vector
     if (isClosedU()) {
-        _u.clear();
-
         _u.push_back(start);
 
-        for (int i = 0; i < _n_u + 1; i++) {
+        for (int i = 0; i < _n_u + _d; i++) {
             _u.push_back(start + i * (_model_surface->getParDeltaU() / _n_u));
         }
 
@@ -189,13 +188,12 @@ inline void Blending_spline_surface<T>::createU(T start, T end) {
 
 template <typename T>
 inline void Blending_spline_surface<T>::createV(T start, T end) {
+    _v.clear();
     // Closed knot vector
     if (isClosedV()) {
-        _v.clear();
-
         _v.push_back(start);
 
-        for (int i = 0; i < _n_v + 1; i++) {
+        for (int i = 0; i < _n_v + _d; i++) {
             _v.push_back(start + i * (_model_surface->getParDeltaV() / _n_v));
         }
 

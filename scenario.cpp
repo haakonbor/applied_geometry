@@ -110,11 +110,11 @@ void Scenario::initializeScenario() {
   //  ptom->insert(ptrack2);
 
   /* 2ND DEGREE B-SPLINE */
-  //  auto bspline = new hbb::My_B_spline<float>(c);
-  //  bspline->toggleDefaultVisualizer();
-  //  bspline->sample(60, 0);
-  //  bspline->setLineWidth(4);
-  //  this->scene()->insert(bspline);
+  auto bspline = new hbb::My_B_spline<float>(c);
+  bspline->toggleDefaultVisualizer();
+  bspline->sample(60, 0);
+  bspline->setLineWidth(4);
+  this->scene()->insert(bspline);
 
   /* CLOSED SUBDIVISION CURVE */
   //  // 2nd-degree curve
@@ -135,17 +135,18 @@ void Scenario::initializeScenario() {
 
   /* BLENDING SPLINE CURVE */
   /* MODEL CURVE */
-  auto curve = new hbb::Model_curve1<float>();
-  curve->toggleDefaultVisualizer();
-  curve->sample(100, 1);
-  curve->setLineWidth(1);
-  this->scene()->insert(curve);
-  auto blending_spline_curve = new hbb::Blending_spline_curve<float>(curve, 4);
-  blending_spline_curve->toggleDefaultVisualizer();
-  blending_spline_curve->sample(100, 0);
-  blending_spline_curve->setLineWidth(4);
-  blending_spline_curve->setColor(GMlib::GMcolor::blue());
-  this->scene()->insert(blending_spline_curve);
+  //    auto curve = new hbb::Model_curve1<float>();
+  //    curve->toggleDefaultVisualizer();
+  //    curve->sample(100, 1);
+  //    curve->setLineWidth(1);
+  //    this->scene()->insert(curve);
+  //    auto blending_spline_curve = new
+  //    hbb::Blending_spline_curve<float>(curve, 4);
+  //    blending_spline_curve->toggleDefaultVisualizer();
+  //    blending_spline_curve->sample(100, 0);
+  //    blending_spline_curve->setLineWidth(4);
+  //    blending_spline_curve->setColor(GMlib::GMcolor::blue());
+  //    this->scene()->insert(blending_spline_curve);
 
   /* BLENDING SPLINE SURFACE */
   //  auto cylinder = new GMlib::PCylinder<float>();

@@ -109,7 +109,7 @@ void Blending_spline_curve<T>::createKnotVector(T start, T end) {
 
     _knot_vector.push_back(start);
 
-    for (int i = 0; i < _n + 1; i++) {
+    for (int i = 0; i < _n + _d; i++) {
         _knot_vector.push_back(start + i * (_model_curve->getParDelta() / _n));
     }
 
